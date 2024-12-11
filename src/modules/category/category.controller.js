@@ -15,8 +15,6 @@ const getAllCategories = catchError(async (req, res) => {
   let limit = 40;
   if (data.length > limit) {
     data.length = limit;
-  } else {
-    console.log("no");
   }
   let metaData = {
     result,
