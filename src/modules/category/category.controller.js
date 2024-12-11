@@ -20,26 +20,26 @@ const getAllCategories = catchError(async (req, res) => {
     result,
     limit,
   };
-  return res.status(201).json({ statsMessage: "sucess", metaData, data });
+  res.status(201).json({ statsMessage: "sucess", metaData, data });
 });
 
 const getOneCategory = catchError(async (req, res) => {
   let { id } = req.params;
   let data = await categoryModel.findById(id);
-  return res.status(201).json({ statsMessage: "sucess", data });
+  res.status(201).json({ statsMessage: "sucess", data });
 });
 
 const updateCategory = catchError(async (req, res) => {
   let { id } = req.params;
   req.body.slug = slugify(req.body.name);
   let data = await categoryModel.findByIdAndUpdate(id, req.body, { new: true });
-  return res.status(201).json({ statsMessage: "sucess", data });
+  res.status(201).json({ statsMessage: "sucess", data });
 });
 
 const deleteCategory = catchError(async (req, res) => {
   let { id } = req.params;
   let data = await categoryModel.findByIdAndDelete(id);
-  return res.status(201).json({ statsMessage: "sucess", data });
+  res.status(201).json({ statsMessage: "sucess", data });
 });
 
 export {
