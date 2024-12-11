@@ -20,7 +20,7 @@ const getAllCategories = catchError(async (req, res) => {
     result,
     limit,
   };
-  res.status(201).json({ statsMessage: "sucess", metaData, data });
+  return res.status(201).json({ statsMessage: "sucess", metaData, data });
 });
 
 const getOneCategory = catchError(async (req, res) => {
