@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 export const dbConnection = () => {
   mongoose
-    .connect("mongodb://127.0.0.1:27017/FreshCart-e-commerce")
+    .connect(
+      "mongodb+srv://mohamedmadkour312:<m2291672>@cluster0.ekftryb.mongodb.net/"
+    )
     .then(() => console.log("dataBase Connected"))
     .catch(() => console.log("dataBase didn't connect successfully"));
 };
