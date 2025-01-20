@@ -3,6 +3,7 @@ import Joi from "joi";
 const addProductValidation = Joi.object({
   title: Joi.string().min(3).max(500).required(),
   price: Joi.number().min(0).required(),
+  priceAfterDisscount: Joi.number().min(0),
   description: Joi.string().min(0).required(),
   sold: Joi.number().min(0),
   quantity: Joi.number().min(0),
