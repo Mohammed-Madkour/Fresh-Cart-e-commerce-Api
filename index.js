@@ -11,10 +11,12 @@ import { addressRouter } from "./src/modules/userAddress/userAddress.routes.js";
 import { cartRouter } from "./src/modules/cart/cart.routes.js";
 import { ordersRouter } from "./src/modules/orders/orders.routes.js";
 import { AppError } from "./src/utils/ErrorMessage.js";
+import cors from "cors"
 
 const app = express();
 
 app.use(express.json());
+app.use(cors())
 
 dbConnection();
 
