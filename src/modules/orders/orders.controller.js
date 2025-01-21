@@ -5,7 +5,7 @@ import { cartModel } from "../../../database/models/cart.js";
 import stripe from "stripe";
 
 const addCashOrder = catchError(async (req, res) => {
-  let { totalOrderPrice } = req.body.totalOrderPrice;
+  let { totalOrderPrice } = req.body.cart;
   let { cartId } = req.params;
   let userId = req.user.id;
   const cart = await cartModel.findById(cartId);
