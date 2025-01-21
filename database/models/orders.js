@@ -1,26 +1,28 @@
 import mongoose from "mongoose";
 
 const ordersSchema = mongoose.Schema({
-  details: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-    trim: true,
-    validate: {
-      validator: function (v) {
-        return /^01[0-9]{9}$/.test(v);
-      },
-      message: "This is not a valid phone number",
+  shippingAddress: {
+    details: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  city: {
-    type: String,
-    required: true,
-    trim: true,
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: {
+        validator: function (v) {
+          return /^01[0-9]{9}$/.test(v);
+        },
+        message: "This is not a valid phone number",
+      },
+    },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
   taxPrice: {
     type: Number,

@@ -1,23 +1,20 @@
 import { catchError } from "../../utils/catchError.js";
-import jwt from "jsonwebtoken";
 import { ordersModel } from "../../../database/models/orders.js";
 import { cartModel } from "../../../database/models/cart.js";
 import stripe from "stripe";
+import { AppError } from "../../utils/ErrorMessage.js";
 
-const addCashOrder = catchError(async (req, res) => {
-  let { totalOrderPrice } = req.body.cart;
+const addCashOrder = catchError(async (req, res, next) => {
   let { cartId } = req.params;
   let userId = req.user.id;
   const cart = await cartModel.findById(cartId);
   if (!cart) {
-    return res
-      .status(404)
-      .json({ message: `there is no cart for this user : ${userId}` });
+    return new AppError(`there is no cart for this user : ${userId}`, 404);
   }
   let cartItems = cart.products;
-  totalOrderPrice = cart.totalCartPrice;
+  let totalOrderPrice = cart.totalCartPrice;
   let data = new ordersModel({
-    ...req.body,
+    shippingAddress: req.body.shippingAddress,
     userId,
     totalOrderPrice,
     cartItems,
@@ -38,13 +35,11 @@ const getAllUserOrders = catchError(async (req, res) => {
   res.status(201).json({ statsMessage: "success", data });
 });
 
-const checkOutSession = catchError(async () => {
+const checkOutSession = catchError(async (req, res, async) => {
   let { cartId } = req.params;
   const cart = await cartModel.findById(cartId);
   if (!cart) {
-    return res
-      .status(404)
-      .json({ message: `there is no cart for this user : ${userId}` });
+    return new AppError(`there is no cart for this user : ${userId}`, 404);
   }
   const session = await stripe.checkout.sessions.create({
     line_items: [
