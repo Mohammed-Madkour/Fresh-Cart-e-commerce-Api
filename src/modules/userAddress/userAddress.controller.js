@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { userModel } from "../../../database/models/userAddress.js";
 
 const addAddress = catchError(async (req, res) => {
-  let { name, city, phone, details } = req.body;
   const token = req.header("token");
   if (!token) {
     return res
@@ -17,7 +16,10 @@ const addAddress = catchError(async (req, res) => {
       .json({ statsMessage: "fail", message: "invalid token" });
   }
   const userId = decoded.id;
-  let data = new userModel({ name, city, phone, details, userId });
+  let data = new userModel({
+    shippingAddress: req.body.shippingAddress,
+    userId,
+  });
   await data.save();
   res.status(201).json({ statsMessage: "success", data });
 });
@@ -37,7 +39,6 @@ const getAllAddresses = catchError(async (req, res) => {
   }
   let userId = decoded.id;
   let data = await userModel.find({ userId });
-
   res.status(201).json({ statsMessage: "success", data });
 });
 

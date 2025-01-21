@@ -6,17 +6,7 @@ import stripe from "stripe";
 
 const addCashOrder = catchError(async (req, res) => {
   let { cartId } = req.params;
-  const token = req.header("token");
-  if (!token) {
-    return res.status(404).json({ message: "No token provided" });
-  }
-  const decoded = jwt.verify(token, "Mo@2291672123456");
-  if (!decoded) {
-    return res
-      .status(400)
-      .json({ statsMessage: "fail", message: "invalid token" });
-  }
-  let userId = decoded.id;
+  let userId = req.user.id;
   const cart = await cartModel.findById(cartId);
   if (!cart) {
     return res
@@ -38,21 +28,8 @@ const addCashOrder = catchError(async (req, res) => {
     data,
   });
 });
-
 const getAllUserOrders = catchError(async (req, res) => {
-  const token = req.header("token");
-  if (!token) {
-    return res
-      .status(404)
-      .json({ statsMessage: "fail", message: "No token provided" });
-  }
-  const decoded = jwt.verify(token, "Mo@2291672123456");
-  if (!decoded) {
-    return res
-      .status(400)
-      .json({ statsMessage: "fail", message: "invalid token" });
-  }
-  let userId = decoded.id;
+  let userId = req.user.id;
   let data = await ordersModel.find({ userId }).populate({
     path: "cartItems.product",
     select: "subCategoryId brandId categoryId images title",
@@ -62,16 +39,6 @@ const getAllUserOrders = catchError(async (req, res) => {
 
 const checkOutSession = catchError(async () => {
   let { cartId } = req.params;
-  const token = req.header("token");
-  if (!token) {
-    return res.status(404).json({ message: "No token provided" });
-  }
-  const decoded = jwt.verify(token, "Mo@2291672123456");
-  if (!decoded) {
-    return res
-      .status(400)
-      .json({ statsMessage: "fail", message: "invalid token" });
-  }
   const cart = await cartModel.findById(cartId);
   if (!cart) {
     return res
@@ -81,14 +48,21 @@ const checkOutSession = catchError(async () => {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price: "{{PRICE_ID}}",
-        quantity: 1,
+        currency: "egp",
+        unit_amount: cart.products.price,
+        product_data: {
+          name: cart.products.product,
+        },
+        quantity: cart.products.count,
       },
     ],
     mode: "payment",
     success_url: "https://fresh-cart-e-commerce-api.vercel.app/success",
     cancel_url: `https://fresh-cart-e-commerce-api.vercel.app/api/v1/cart`,
+    customer_email: req.user.email,
+    client_refrence_id: req.params.id,
   });
+  res.status(200).json({ statusMessage: "success", session });
 });
 
-export { addCashOrder, getAllUserOrders };
+export { addCashOrder, getAllUserOrders, checkOutSession };
